@@ -3,7 +3,6 @@ import abc
 import io
 import os
 import shutil
-import sys
 import typing
 
 
@@ -141,6 +140,8 @@ class MemoryFormatIOBackend(FormatIOBackend):
         self._memory_store.truncate(0)
 
     def __len__(self):
+        # NOTE: due to Python's buffer protocol, this should not copy the data.
+        # https://docs.python.org/3.13/c-api/buffer.html
         return len(self._memory_store.getvalue())
 
     def _create_writer(self, resume=False) -> typing.IO:
