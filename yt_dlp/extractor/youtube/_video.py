@@ -3786,7 +3786,7 @@ class YoutubeIE(YoutubeBaseInfoExtractor):
                     xtags = fmt_stream.get('xtags')
                     is_broken = False
                     if (
-                       (fmt_stream.get('qualityOrdinal').endswith('_SAVER')
+                       ((fmt_stream.get('qualityOrdinal') or '').endswith('_SAVER')
                         or fmt_stream.get('audioQuality') == 'AUDIO_QUALITY_ULTRALOW')
                        and client_name in ('android', 'android_vr', 'ios')
                        ):
