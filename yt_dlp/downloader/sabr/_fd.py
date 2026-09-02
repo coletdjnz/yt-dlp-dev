@@ -197,12 +197,18 @@ class SabrFdSession:
         video_selector = None
         caption_selector = None
 
+        def format_writer(self, arg_dict):
+            filename = arg_dict.get('filename')
+            info_dict = arg_dict['info_dict']
+            writers_length = len(self.writers)
+            return SabrFDFormatWriter(
+                self.fd, filename, self.video_id, info_dict,
+                writers_length, resume=self.resume)
+
         if self.audio_format:
             audio_selector = AudioSelector(
                 display_name=self.audio_format['display_name'], format_ids=[self.audio_format['format_id']])
-            self.writers[audio_selector.display_name] = SabrFDFormatWriter(
-                self.fd, self.audio_format.get('filename'), self.video_id,
-                self.audio_format['info_dict'], len(self.writers), resume=self.resume)
+            self.writers[audio_selector.display_name] = format_writer(self, self.audio_format)
 
         if self.video_format:
             video_selector = VideoSelector(
@@ -210,16 +216,12 @@ class SabrFdSession:
                 format_ids=[self.video_format['format_id']],
                 # required for server to select hdr/non-hdr formats corrrectly for android/ios
                 prefer_hdr='HDR' in self.video_format['info_dict'].get('dynamic_range', 'SDR'))
-            self.writers[video_selector.display_name] = SabrFDFormatWriter(
-                self.fd, self.video_format.get('filename'), self.video_id,
-                self.video_format['info_dict'], len(self.writers), resume=self.resume)
+            self.writers[video_selector.display_name] = format_writer(self, self.video_format)
 
         if self.caption_format:
             caption_selector = CaptionSelector(
                 display_name=self.caption_format['display_name'], format_ids=[self.caption_format['format_id']])
-            self.writers[caption_selector.display_name] = SabrFDFormatWriter(
-                self.fd, self.caption_format.get('filename'),
-                self.caption_format['info_dict'], len(self.writers), resume=self.resume)
+            self.writers[caption_selector.display_name] = format_writer(self, self.caption_format)
 
         return audio_selector, video_selector, caption_selector
 
