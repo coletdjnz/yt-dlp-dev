@@ -4,7 +4,9 @@ from yt_dlp.utils import YoutubeDLError, bug_reports_message
 
 class SabrStreamError(YoutubeDLError):
     def __init__(self, msg=None, expected=True):
-        super().__init__(msg + ('' if expected else bug_reports_message()))
+        if not (msg is None or expected):
+            msg += bug_reports_message()
+        super().__init__(msg)
         self.expected = expected
 
 
