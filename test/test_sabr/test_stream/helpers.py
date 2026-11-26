@@ -80,7 +80,7 @@ class MockBaseIO(io.BytesIO):
 
     def read(self, size=-1):
         data = super().read(size)
-        if self._error and (self.tell() == self.getbuffer().nbytes):
+        if self._error and (self.tell() == len(self.getvalue())):
             raise self._error
         return data
 
